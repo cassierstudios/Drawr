@@ -571,3 +571,19 @@
   padding: 10px 14px;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
+
+
+/* Hide scrollbar during screenshot */
+.sd-hide-scrollbar,
+.sd-hide-scrollbar body {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.sd-hide-scrollbar::-webkit-scrollbar,
+.sd-hide-scrollbar body::-webkit-scrollbar,
+.sd-hide-scrollbar *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}

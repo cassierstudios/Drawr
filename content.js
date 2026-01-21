@@ -530,6 +530,7 @@
   function takeScreenshot() {
     overlay.style.display = 'none';
     sidebar.style.display = 'none';
+    document.documentElement.classList.add('sd-hide-scrollbar');
     // Capture scroll position at the moment of screenshot
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
@@ -538,6 +539,7 @@
       chrome.runtime.sendMessage({ action: 'capture-screenshot' }, (response) => {
         overlay.style.display = '';
         sidebar.style.display = '';
+        document.documentElement.classList.remove('sd-hide-scrollbar');
         if (response && response.dataUrl) {
           const img = new Image();
           img.onload = () => {
@@ -564,6 +566,7 @@
   async function takeFullPageScreenshot() {
     overlay.style.display = 'none';
     sidebar.style.display = 'none';
+    document.documentElement.classList.add('sd-hide-scrollbar');
     
     const originalScrollX = window.scrollX;
     const originalScrollY = window.scrollY;
@@ -621,6 +624,7 @@
     
     overlay.style.display = '';
     sidebar.style.display = '';
+    document.documentElement.classList.remove('sd-hide-scrollbar');
     
     const link = document.createElement('a');
     link.download = `fullpage-screenshot-${Date.now()}.png`;
