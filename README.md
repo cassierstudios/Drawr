@@ -2,7 +2,7 @@
 
 A lightweight Chrome extension for drawing and annotating on any webpage. Perfect for presentations, tutorials, bug reports, or just doodling.
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-support-ff5e5b?style=flat&logo=ko-fi)](https://ko-fi.com/lucamakes)
 [![Twitter Follow](https://img.shields.io/twitter/follow/lucamakes?style=social)](https://twitter.com/lucamakes)
 
 ![Drawr Demo](demo.gif)
@@ -96,7 +96,7 @@ MIT License - see [LICENSE](LICENSE) for details
 
 If you find this useful, consider:
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-support-ff5e5b?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/lucamakes)
 
 ## Contact
 
