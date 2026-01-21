@@ -9,7 +9,7 @@
   const defaultKeybindings = {
     pointer: '1', pen: '2', highlighter: '3', eraser: '4', text: '5',
     arrow: 'a', rectangle: 'r', circle: 'c',
-    undo: 'z', redo: 'y', screenshot: 's', clear: 'd', toggle: 'h'
+    undo: 'z', redo: 'y', screenshot: 's', fullscreenshot: 'f', clear: 'd', toggle: 'h'
   };
 
   let keybindings = { ...defaultKeybindings };
@@ -23,7 +23,8 @@
     history: [],
     redoHistory: [],
     collapsed: false,
-    shapesDropdownOpen: false
+    shapesDropdownOpen: false,
+    screenshotDropdownOpen: false
   };
 
   const colors = [
@@ -187,7 +188,13 @@
         <span class="sd-label">Actions</span>
         <button class="sd-action-btn" data-action="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
         <button class="sd-action-btn" data-action="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
-        <button class="sd-action-btn" data-action="screenshot" title="Screenshot"><span class="material-symbols-rounded">photo_camera</span></button>
+        <div class="sd-dropdown-wrapper">
+          <button class="sd-action-btn sd-screenshot-btn" data-action="screenshot-menu" title="Screenshot"><span class="material-symbols-rounded">photo_camera</span></button>
+          <div class="sd-screenshot-dropdown">
+            <button class="sd-dropdown-item" data-action="screenshot"><span class="material-symbols-rounded">crop_free</span><span>Visible area</span></button>
+            <button class="sd-dropdown-item" data-action="fullscreenshot"><span class="material-symbols-rounded">fullscreen</span><span>Full page</span></button>
+          </div>
+        </div>
         <button class="sd-action-btn danger" data-action="clear" title="Clear"><span class="material-symbols-rounded">delete</span></button>
         <button class="sd-action-btn sd-info-btn" data-action="info" title="Settings"><span class="material-symbols-rounded">settings</span></button>
       </div>
@@ -209,6 +216,7 @@
         <div class="sd-keybind" data-action="undo"><span class="sd-keybind-label">Undo</span><input class="sd-keybind-input" maxlength="1" value="z"></div>
         <div class="sd-keybind" data-action="redo"><span class="sd-keybind-label">Redo</span><input class="sd-keybind-input" maxlength="1" value="y"></div>
         <div class="sd-keybind" data-action="screenshot"><span class="sd-keybind-label">Screenshot</span><input class="sd-keybind-input" maxlength="1" value="s"></div>
+        <div class="sd-keybind" data-action="fullscreenshot"><span class="sd-keybind-label">Full page screenshot</span><input class="sd-keybind-input" maxlength="1" value="f"></div>
         <div class="sd-keybind" data-action="clear"><span class="sd-keybind-label">Clear</span><input class="sd-keybind-input" maxlength="1" value="d"></div>
         <div class="sd-keybind" data-action="toggle"><span class="sd-keybind-label">Toggle sidebar</span><input class="sd-keybind-input" maxlength="1" value="h"></div>
       </div>
@@ -267,6 +275,30 @@
 
   document.addEventListener('click', () => {
     if (state.shapesDropdownOpen) { shapesDropdown.classList.remove('open'); state.shapesDropdownOpen = false; }
+    if (state.screenshotDropdownOpen) { screenshotDropdown.classList.remove('open'); state.screenshotDropdownOpen = false; }
+  });
+
+  // Screenshot dropdown
+  const screenshotBtn = sidebar.querySelector('.sd-screenshot-btn');
+  const screenshotDropdown = sidebar.querySelector('.sd-screenshot-dropdown');
+
+  screenshotBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    state.screenshotDropdownOpen = !state.screenshotDropdownOpen;
+    screenshotDropdown.classList.toggle('open', state.screenshotDropdownOpen);
+    // Close shapes dropdown if open
+    if (state.shapesDropdownOpen) { shapesDropdown.classList.remove('open'); state.shapesDropdownOpen = false; }
+  });
+
+  screenshotDropdown.querySelectorAll('.sd-dropdown-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const action = item.dataset.action;
+      if (action === 'screenshot') takeScreenshot();
+      else if (action === 'fullscreenshot') takeFullPageScreenshot();
+      screenshotDropdown.classList.remove('open');
+      state.screenshotDropdownOpen = false;
+    });
   });
 
   // Colors
@@ -328,7 +360,6 @@
       if (a === 'undo') undo();
       else if (a === 'redo') redo();
       else if (a === 'clear') clearCanvas();
-      else if (a === 'screenshot') takeScreenshot();
       else if (a === 'info') toggleInfo();
     });
   });
@@ -530,6 +561,73 @@
     }, 100);
   }
 
+  async function takeFullPageScreenshot() {
+    overlay.style.display = 'none';
+    sidebar.style.display = 'none';
+    
+    const originalScrollX = window.scrollX;
+    const originalScrollY = window.scrollY;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const fullWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+    const fullHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    const dpr = window.devicePixelRatio || 1;
+    
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = fullWidth * dpr;
+    finalCanvas.height = fullHeight * dpr;
+    const finalCtx = finalCanvas.getContext('2d');
+    finalCtx.scale(dpr, dpr);
+    
+    const cols = Math.ceil(fullWidth / viewportWidth);
+    const rows = Math.ceil(fullHeight / viewportHeight);
+    
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const scrollX = col * viewportWidth;
+        const scrollY = row * viewportHeight;
+        
+        window.scrollTo(scrollX, scrollY);
+        await new Promise(r => setTimeout(r, 150));
+        
+        const actualScrollX = window.scrollX;
+        const actualScrollY = window.scrollY;
+        
+        const dataUrl = await new Promise(resolve => {
+          chrome.runtime.sendMessage({ action: 'capture-screenshot' }, (response) => {
+            resolve(response?.dataUrl);
+          });
+        });
+        
+        if (dataUrl) {
+          const img = await new Promise(resolve => {
+            const i = new Image();
+            i.onload = () => resolve(i);
+            i.src = dataUrl;
+          });
+          
+          finalCtx.drawImage(img, actualScrollX, actualScrollY, img.width / dpr, img.height / dpr);
+        }
+      }
+    }
+    
+    // Draw all strokes on the final canvas (no offset since canvas is full page)
+    finalCtx.lineCap = 'round';
+    finalCtx.lineJoin = 'round';
+    for (const stroke of strokes) drawStrokeToContext(finalCtx, stroke, 0, 0);
+    
+    // Restore original scroll position
+    window.scrollTo(originalScrollX, originalScrollY);
+    
+    overlay.style.display = '';
+    sidebar.style.display = '';
+    
+    const link = document.createElement('a');
+    link.download = `fullpage-screenshot-${Date.now()}.png`;
+    link.href = finalCanvas.toDataURL('image/png');
+    link.click();
+  }
+
   window.__screenDrawToggle = toggle;
 
   // Keyboard shortcuts - using customizable keybindings
@@ -548,6 +646,7 @@
       else if (key === keybindings.undo) { e.preventDefault(); undo(); }
       else if (key === keybindings.redo) { e.preventDefault(); redo(); }
       else if (key === keybindings.screenshot) { e.preventDefault(); takeScreenshot(); }
+      else if (key === keybindings.fullscreenshot) { e.preventDefault(); takeFullPageScreenshot(); }
       else if (key === keybindings.clear) { e.preventDefault(); clearCanvas(); }
       else if (key === keybindings.toggle) { e.preventDefault(); toggleCollapse(); }
     }

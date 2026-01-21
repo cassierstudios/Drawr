@@ -451,6 +451,29 @@
   transform: translateX(0);
 }
 
+.sd-screenshot-dropdown {
+  position: absolute;
+  right: 100%;
+  top: 0;
+  margin-right: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  transition: all 0.2s ease;
+  min-width: 130px;
+}
+
+.sd-screenshot-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
 .sd-dropdown-item {
   display: flex;
   align-items: center;
