@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Screen Draw",
+  "version": "1.0.0",
+  "description": "Draw on any webpage with a modern, collapsible toolbar",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "48": "icons/icon48.svg",
+      "128": "icons/icon128.svg"
+    },
+    "default_title": "Toggle Screen Draw"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-draw": {
+      "suggested_key": { "default": "Alt+D" },
+      "description": "Toggle drawing mode"
+    },
+    "clear-canvas": {
+      "suggested_key": { "default": "Alt+C" },
+      "description": "Clear canvas"
+    },
+    "undo": {
+      "suggested_key": { "default": "Alt+Z" },
+      "description": "Undo last stroke"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.svg",
+    "48": "icons/icon48.svg",
+    "128": "icons/icon128.svg"
+  }
+}

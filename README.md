@@ -1,0 +1,82 @@
+# Screen Draw
+
+A lightweight Chrome extension for drawing and annotating on any webpage. Perfect for presentations, tutorials, bug reports, or just doodling.
+
+![Screen Draw Demo](demo.gif)
+
+## Features
+
+- **Pen Tool** - Smooth freehand drawing with adjustable size
+- **Highlighter** - Semi-transparent strokes for highlighting content
+- **Text Tool** - Add text annotations anywhere on the page
+- **Eraser** - Remove parts of your drawings
+- **Color Picker** - 10 preset colors + custom color picker
+- **Undo/Clear** - Easily revert mistakes or start fresh
+- **Collapsible Sidebar** - Minimal UI that stays out of your way
+- **Scroll Support** - Drawings stay anchored to page content
+- **Keyboard Shortcuts** - Fast tool switching without clicking
+
+## Installation
+
+### From Source
+1. Clone this repository
+   ```bash
+   git clone https://github.com/yourusername/screen-draw.git
+   ```
+2. Open Chrome and go to `chrome://extensions`
+3. Enable "Developer mode" (top right)
+4. Click "Load unpacked" and select the `screen-draw` folder
+
+### From Chrome Web Store
+*Coming soon*
+
+## Usage
+
+1. Click the Screen Draw icon in your browser toolbar to activate
+2. Select a tool from the sidebar
+3. Draw on the page
+4. Click the icon again to deactivate
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `1` | Pointer mode (interact with page) |
+| `2` | Pen tool |
+| `3` | Highlighter |
+| `4` | Eraser |
+| `5` | Text tool |
+| `Z` | Undo |
+| `D` | Clear all |
+| `H` | Toggle sidebar |
+
+## Tech Stack
+
+- Vanilla JavaScript (no frameworks)
+- Canvas API for drawing
+- Chrome Extension Manifest V3
+- Google Material Symbols for icons
+
+## Performance
+
+Screen Draw is optimized for smooth drawing:
+- Fixed-position canvas with scroll-aware rendering
+- Stroke-based storage instead of pixel data
+- Throttled event handlers
+- Bezier curve smoothing with path simplification
+
+## Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest features
+- Submit pull requests
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details
+
+## Acknowledgments
+
+- Icons by [Google Material Symbols](https://fonts.google.com/icons)
+- Font by [Inter](https://rsms.me/inter/)
