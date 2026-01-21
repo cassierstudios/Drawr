@@ -85,7 +85,9 @@ If you find this useful, consider:
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
 
-Or follow me on Twitter for updates: [@YOUR_TWITTER](https://twitter.com/YOUR_TWITTER)
+## Contact
+
+Got questions or feedback? Reach out on Twitter: [@YOUR_TWITTER](https://twitter.com/YOUR_TWITTER)
 
 ## Acknowledgments
 
