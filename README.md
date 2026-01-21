@@ -2,6 +2,9 @@
 
 A lightweight Chrome extension for drawing and annotating on any webpage. Perfect for presentations, tutorials, bug reports, or just doodling.
 
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
+[![Twitter Follow](https://img.shields.io/twitter/follow/YOUR_TWITTER?style=social)](https://twitter.com/YOUR_TWITTER)
+
 ![Screen Draw Demo](demo.gif)
 
 ## Features
@@ -21,11 +24,11 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 ### From Source
 1. Clone this repository
    ```bash
-   git clone https://github.com/yourusername/screen-draw.git
+   git clone https://github.com/cassierstudios/Drawr.git
    ```
 2. Open Chrome and go to `chrome://extensions`
 3. Enable "Developer mode" (top right)
-4. Click "Load unpacked" and select the `screen-draw` folder
+4. Click "Load unpacked" and select the `Drawr` folder
 
 ### From Chrome Web Store
 *Coming soon*
@@ -75,6 +78,14 @@ Contributions are welcome! Feel free to:
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details
+
+## Support
+
+If you find this useful, consider:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
+
+Or follow me on Twitter for updates: [@YOUR_TWITTER](https://twitter.com/YOUR_TWITTER)
 
 ## Acknowledgments
 
