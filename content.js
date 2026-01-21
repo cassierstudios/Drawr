@@ -499,6 +499,10 @@
   function takeScreenshot() {
     overlay.style.display = 'none';
     sidebar.style.display = 'none';
+    // Capture scroll position at the moment of screenshot
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const dpr = window.devicePixelRatio || 1;
     setTimeout(() => {
       chrome.runtime.sendMessage({ action: 'capture-screenshot' }, (response) => {
         overlay.style.display = '';
@@ -511,7 +515,10 @@
             const c = canvas.getContext('2d');
             c.drawImage(img, 0, 0);
             c.lineCap = 'round'; c.lineJoin = 'round';
-            for (const stroke of strokes) drawStrokeToContext(c, stroke, window.scrollX, window.scrollY);
+            // Scale context to match device pixel ratio since captureVisibleTab captures at screen resolution
+            c.scale(dpr, dpr);
+            // Use the captured scroll position, not current (which might have changed)
+            for (const stroke of strokes) drawStrokeToContext(c, stroke, scrollX, scrollY);
             const link = document.createElement('a');
             link.download = `screenshot-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
