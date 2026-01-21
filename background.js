@@ -26,7 +26,7 @@ async function toggleDrawMode(tabId) {
       injectedTabs.add(tabId);
     }
   } catch (err) {
-    console.error('Screen Draw error:', err);
+    console.error('Drawr error:', err);
   }
 }
 

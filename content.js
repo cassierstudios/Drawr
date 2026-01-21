@@ -489,15 +489,20 @@
 
   function clearCanvas() { pushHistory(); strokes = []; renderStrokes(); saveStrokes(); }
   function toggleCollapse() { state.collapsed = !state.collapsed; sidebar.classList.toggle('collapsed', state.collapsed); }
-  function toggle() { state.active = !state.active; overlay.classList.toggle('active', state.active); sidebar.classList.toggle('sd-hidden', !state.active); }
+  function toggle() { 
+    state.active = !state.active; 
+    overlay.classList.toggle('active', state.active); 
+    sidebar.classList.toggle('sd-visible', state.active);
+    sidebar.classList.toggle('sd-hidden', !state.active); 
+  }
 
   function takeScreenshot() {
-    overlay.style.visibility = 'hidden';
-    sidebar.style.visibility = 'hidden';
+    overlay.style.display = 'none';
+    sidebar.style.display = 'none';
     setTimeout(() => {
       chrome.runtime.sendMessage({ action: 'capture-screenshot' }, (response) => {
-        overlay.style.visibility = 'visible';
-        sidebar.style.visibility = 'visible';
+        overlay.style.display = '';
+        sidebar.style.display = '';
         if (response && response.dataUrl) {
           const img = new Image();
           img.onload = () => {
@@ -515,7 +520,7 @@
           img.src = response.dataUrl;
         }
       });
-    }, 50);
+    }, 100);
   }
 
   window.__screenDrawToggle = toggle;
@@ -561,6 +566,9 @@
 
   window.addEventListener('resize', updateCanvasSize);
   window.addEventListener('scroll', () => requestAnimationFrame(renderStrokes), { passive: true });
+
+  // Initial fade-in
+  setTimeout(() => sidebar.classList.add('sd-visible'), 50);
 
   loadStrokes();
 })();

@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for Screen Draw
+about: Suggest an idea for Drawr
 title: '[Feature] '
 labels: enhancement
 assignees: ''

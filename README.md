@@ -5,7 +5,7 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
 [![Twitter Follow](https://img.shields.io/twitter/follow/lucamakes?style=social)](https://twitter.com/lucamakes)
 
-![Screen Draw Demo](demo.gif)
+![Drawr Demo](demo.gif)
 
 ## Features
 
@@ -13,17 +13,14 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 - **Highlighter** - Semi-transparent strokes for highlighting content
 - **Text Tool** - Add text annotations anywhere on the page
 - **Eraser** - Remove parts of your drawings
-- **Arrow Tool** - Draw arrows to point at things
-- **Rectangle Tool** - Draw rectangles to highlight areas
-- **Circle Tool** - Draw circles/ellipses
-- **Color Picker** - 10 preset colors + custom color picker
+- **Shape Tools** - Arrow, rectangle, and circle tools in a dropdown menu
+- **Color Picker** - 4 preset colors (optimized for light/dark backgrounds) + custom color picker
 - **Undo/Redo** - Easily revert mistakes or redo actions
-- **Clear** - Start fresh
 - **Screenshot** - Capture the page with your annotations as PNG
 - **Auto-Save** - Drawings persist per URL and reload when you revisit
+- **Customizable Keybindings** - Remap any shortcut to your preference
 - **Collapsible Sidebar** - Minimal UI that stays out of your way
 - **Scroll Support** - Drawings stay anchored to page content
-- **Keyboard Shortcuts** - Fast tool switching without clicking
 
 ## Installation
 
@@ -41,15 +38,17 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 
 ## Usage
 
-1. Click the Screen Draw icon in your browser toolbar to activate
+1. Click the Drawr icon in your browser toolbar to activate
 2. Select a tool from the sidebar
 3. Draw on the page
 4. Click the icon again to deactivate
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
+All shortcuts are customizable via the settings panel (click the gear icon).
+
+| Default Key | Action |
+|-------------|--------|
 | `1` | Pointer mode (interact with page) |
 | `2` | Pen tool |
 | `3` | Highlighter |
@@ -64,6 +63,8 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 | `D` | Clear all |
 | `H` | Toggle sidebar |
 
+To customize shortcuts, click the settings icon in the sidebar and type a new key in any field.
+
 ## Tech Stack
 
 - Vanilla JavaScript (no frameworks)
@@ -73,7 +74,7 @@ A lightweight Chrome extension for drawing and annotating on any webpage. Perfec
 
 ## Performance
 
-Screen Draw is optimized for smooth drawing:
+Drawr is optimized for smooth drawing:
 - Fixed-position canvas with scroll-aware rendering
 - Stroke-based storage instead of pixel data
 - Throttled event handlers
