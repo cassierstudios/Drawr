@@ -1,16 +1,19 @@
-.sd-sidebar .material-symbols-rounded {
-  font-family: 'Material Symbols Rounded';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
+.sd-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.sd-tool-btn.active .sd-icon,
+.sd-action-btn:hover .sd-icon,
+.sd-tool-btn:hover .sd-icon {
+  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg) brightness(97%) contrast(95%);
+}
+
+.sd-tool-btn.active .sd-icon {
+  filter: brightness(0) invert(1);
+  opacity: 1;
 }
 
 .sd-overlay {
@@ -100,12 +103,13 @@
   left: -30px;
 }
 
-.sd-toggle-tab .material-symbols-rounded {
-  font-size: 16px;
+.sd-toggle-tab .sd-icon {
+  width: 16px;
+  height: 16px;
   transition: transform 0.3s ease;
 }
 
-.sd-sidebar.collapsed .sd-toggle-tab .material-symbols-rounded {
+.sd-sidebar.collapsed .sd-toggle-tab .sd-icon {
   transform: rotate(180deg);
 }
 
@@ -162,8 +166,9 @@
   color: #fff;
 }
 
-.sd-tool-btn .material-symbols-rounded {
-  font-size: 18px;
+.sd-tool-btn .sd-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .sd-colors {
@@ -311,8 +316,9 @@
   color: #ef4444;
 }
 
-.sd-action-btn .material-symbols-rounded {
-  font-size: 18px;
+.sd-action-btn .sd-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .sd-info-popup {
@@ -364,8 +370,9 @@
   color: rgba(0, 0, 0, 0.7);
 }
 
-.sd-info-close .material-symbols-rounded {
-  font-size: 18px;
+.sd-info-close .sd-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .sd-info-content {
@@ -429,6 +436,7 @@
   opacity: 0.6;
 }
 
+.sd-draw-dropdown,
 .sd-shapes-dropdown {
   position: absolute;
   right: 100%;
@@ -446,6 +454,7 @@
   min-width: 120px;
 }
 
+.sd-draw-dropdown.open,
 .sd-shapes-dropdown.open {
   opacity: 1;
   visibility: visible;
@@ -480,7 +489,7 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border: none;
   background: transparent;
   border-radius: 6px;
@@ -489,6 +498,7 @@
   font-size: 12px;
   color: rgba(0, 0, 0, 0.7);
   transition: all 0.15s ease;
+  text-align: left;
 }
 
 .sd-dropdown-item:hover {
@@ -501,8 +511,19 @@
   color: white;
 }
 
-.sd-dropdown-item .material-symbols-rounded {
-  font-size: 18px;
+.sd-dropdown-item .sd-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+}
+
+.sd-dropdown-item:hover .sd-icon {
+  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg) brightness(97%) contrast(95%);
+}
+
+.sd-dropdown-item.active .sd-icon {
+  filter: brightness(0) invert(1);
+  opacity: 1;
 }
 
 
@@ -590,19 +611,38 @@
 }
 
 
-/* FPS Counter */
-.sd-fps-counter {
+
+/* Area selection screenshot */
+.sd-area-selection-overlay {
   position: fixed;
-  bottom: 12px;
-  left: 12px;
-  z-index: 2147483647;
-  background: rgba(0, 0, 0, 0.7);
-  color: #4ade80;
-  font-family: 'Inter', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 6px;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483648;
+  cursor: crosshair;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sd-area-selection-box {
+  position: fixed;
+  display: none;
+  border: 2px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
   pointer-events: none;
-  user-select: none;
+}
+
+.sd-area-selection-hint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  pointer-events: none;
 }

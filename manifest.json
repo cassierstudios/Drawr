@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Drawr",
-  "version": "1.3.0",
-  "description": "Draw and annotate any webpage. Pen, highlighter, shapes, text, and full-page screenshots.",
+  "name": "Drawr - Draw and Annotate on Any Webpage",
+  "version": "1.0.1",
+  "description": "Draw, highlight, add shapes and text to any webpage. Take annotated screenshots with pen, highlighter, arrows, and more.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["<all_urls>"],
   "action": {
@@ -32,7 +32,7 @@
     "128": "icons/128x128.png"
   },
   "web_accessible_resources": [{
-    "resources": ["fabric.min.js"],
+    "resources": ["fabric.min.js", "icons/*.svg"],
     "matches": ["<all_urls>"]
   }]
 }

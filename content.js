@@ -21,7 +21,8 @@
     size: 4,
     collapsed: false,
     shapesDropdownOpen: false,
-    screenshotDropdownOpen: false
+    screenshotDropdownOpen: false,
+    drawDropdownOpen: false
   };
 
   const colors = [
@@ -30,6 +31,7 @@
   ];
 
   const shapeTools = ['arrow', 'rectangle', 'circle', 'line'];
+  const drawTools = ['pen', 'highlighter', 'eraser'];
 
   // Load keybindings from storage
   chrome.storage.local.get(['sd_keybindings'], (result) => {
@@ -51,9 +53,9 @@
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
-  // Load fonts
+  // Load Inter font for UI text
   const fontLink = document.createElement('link');
-  fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap';
   fontLink.rel = 'stylesheet';
   document.head.appendChild(fontLink);
 
@@ -157,29 +159,39 @@
   let currentShape = null;
 
 
+  // Helper to get icon URL
+  function iconUrl(name) {
+    return chrome.runtime.getURL(`icons/${name}.svg`);
+  }
+
   // Sidebar HTML
   const sidebar = document.createElement('div');
   sidebar.className = 'sd-sidebar';
   sidebar.innerHTML = `
     <button class="sd-toggle-tab" title="Toggle sidebar">
-      <span class="material-symbols-rounded">chevron_right</span>
+      <img class="sd-icon" src="${iconUrl('chevron_right')}" alt="">
     </button>
     <div class="sd-content">
       <div class="sd-section">
         <span class="sd-label">Tools</span>
-        <button class="sd-tool-btn" data-tool="pointer" title="Pointer"><span class="material-symbols-rounded">arrow_selector_tool</span></button>
-        <button class="sd-tool-btn active" data-tool="pen" title="Pen"><span class="material-symbols-rounded">edit</span></button>
-        <button class="sd-tool-btn" data-tool="highlighter" title="Highlighter"><span class="material-symbols-rounded">ink_highlighter</span></button>
-        <button class="sd-tool-btn" data-tool="text" title="Text"><span class="material-symbols-rounded">title</span></button>
-        <button class="sd-tool-btn" data-tool="eraser" title="Eraser"><span class="material-symbols-rounded">ink_eraser</span></button>
-        <button class="sd-tool-btn" data-tool="move" title="Move"><span class="material-symbols-rounded">open_with</span></button>
+        <button class="sd-tool-btn" data-tool="pointer" title="Pointer"><img class="sd-icon" src="${iconUrl('arrow_selector_tool')}" alt=""></button>
         <div class="sd-dropdown-wrapper">
-          <button class="sd-tool-btn sd-shapes-btn" data-tool="shapes" title="Shapes"><span class="material-symbols-rounded sd-shape-icon">shapes</span></button>
+          <button class="sd-tool-btn sd-draw-btn active" data-tool="draw" title="Draw"><img class="sd-icon sd-draw-icon" src="${iconUrl('edit')}" alt="" data-default="${iconUrl('edit')}" data-pen="${iconUrl('edit')}" data-highlighter="${iconUrl('ink_highlighter')}" data-eraser="${iconUrl('ink_eraser')}"></button>
+          <div class="sd-draw-dropdown">
+            <button class="sd-dropdown-item active" data-tool="pen"><img class="sd-icon" src="${iconUrl('edit')}" alt=""><span>Pen</span></button>
+            <button class="sd-dropdown-item" data-tool="highlighter"><img class="sd-icon" src="${iconUrl('ink_highlighter')}" alt=""><span>Highlighter</span></button>
+            <button class="sd-dropdown-item" data-tool="eraser"><img class="sd-icon" src="${iconUrl('ink_eraser')}" alt=""><span>Eraser</span></button>
+          </div>
+        </div>
+        <button class="sd-tool-btn" data-tool="text" title="Text"><img class="sd-icon" src="${iconUrl('title')}" alt=""></button>
+        <button class="sd-tool-btn" data-tool="move" title="Move"><img class="sd-icon" src="${iconUrl('open_with')}" alt=""></button>
+        <div class="sd-dropdown-wrapper">
+          <button class="sd-tool-btn sd-shapes-btn" data-tool="shapes" title="Shapes"><img class="sd-icon sd-shape-icon" src="${iconUrl('shapes')}" alt="" data-default="${iconUrl('shapes')}" data-arrow="${iconUrl('arrow_right_alt')}" data-rectangle="${iconUrl('rectangle')}" data-circle="${iconUrl('circle')}" data-line="${iconUrl('horizontal_rule')}"></button>
           <div class="sd-shapes-dropdown">
-            <button class="sd-dropdown-item" data-tool="arrow"><span class="material-symbols-rounded">arrow_right_alt</span><span>Arrow</span></button>
-            <button class="sd-dropdown-item" data-tool="rectangle"><span class="material-symbols-rounded">rectangle</span><span>Rectangle</span></button>
-            <button class="sd-dropdown-item" data-tool="circle"><span class="material-symbols-rounded">circle</span><span>Circle</span></button>
-            <button class="sd-dropdown-item" data-tool="line"><span class="material-symbols-rounded">horizontal_rule</span><span>Line</span></button>
+            <button class="sd-dropdown-item" data-tool="arrow"><img class="sd-icon" src="${iconUrl('arrow_right_alt')}" alt=""><span>Arrow</span></button>
+            <button class="sd-dropdown-item" data-tool="rectangle"><img class="sd-icon" src="${iconUrl('rectangle')}" alt=""><span>Rectangle</span></button>
+            <button class="sd-dropdown-item" data-tool="circle"><img class="sd-icon" src="${iconUrl('circle')}" alt=""><span>Circle</span></button>
+            <button class="sd-dropdown-item" data-tool="line"><img class="sd-icon" src="${iconUrl('horizontal_rule')}" alt=""><span>Line</span></button>
           </div>
         </div>
       </div>
@@ -196,23 +208,24 @@
       </div>
       <div class="sd-section">
         <span class="sd-label">Actions</span>
-        <button class="sd-action-btn" data-action="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
-        <button class="sd-action-btn" data-action="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
+        <button class="sd-action-btn" data-action="undo" title="Undo"><img class="sd-icon" src="${iconUrl('undo')}" alt=""></button>
+        <button class="sd-action-btn" data-action="redo" title="Redo"><img class="sd-icon" src="${iconUrl('redo')}" alt=""></button>
         <div class="sd-dropdown-wrapper">
-          <button class="sd-action-btn sd-screenshot-btn" data-action="screenshot-menu" title="Screenshot"><span class="material-symbols-rounded">photo_camera</span></button>
+          <button class="sd-action-btn sd-screenshot-btn" data-action="screenshot-menu" title="Screenshot"><img class="sd-icon" src="${iconUrl('photo_camera')}" alt=""></button>
           <div class="sd-screenshot-dropdown">
-            <button class="sd-dropdown-item" data-action="screenshot"><span class="material-symbols-rounded">crop_free</span><span>Visible area</span></button>
-            <button class="sd-dropdown-item" data-action="fullscreenshot"><span class="material-symbols-rounded">fullscreen</span><span>Full page</span></button>
+            <button class="sd-dropdown-item" data-action="screenshot">Visible area</button>
+            <button class="sd-dropdown-item" data-action="areashot">Select area</button>
+            <button class="sd-dropdown-item" data-action="fullscreenshot">Full page</button>
           </div>
         </div>
-        <button class="sd-action-btn danger" data-action="clear" title="Clear"><span class="material-symbols-rounded">delete</span></button>
-        <button class="sd-action-btn sd-info-btn" data-action="info" title="Settings"><span class="material-symbols-rounded">settings</span></button>
+        <button class="sd-action-btn danger" data-action="clear" title="Clear"><img class="sd-icon" src="${iconUrl('delete')}" alt=""></button>
+        <button class="sd-action-btn sd-info-btn" data-action="info" title="Settings"><img class="sd-icon" src="${iconUrl('settings')}" alt=""></button>
       </div>
     </div>
     <div class="sd-info-popup">
       <div class="sd-info-header">
         <span>Keyboard Shortcuts</span>
-        <button class="sd-info-close"><span class="material-symbols-rounded">close</span></button>
+        <button class="sd-info-close"><img class="sd-icon" src="${iconUrl('close')}" alt=""></button>
       </div>
       <div class="sd-info-content">
         <div class="sd-keybind" data-action="pointer"><span class="sd-keybind-label">Pointer</span><input class="sd-keybind-input" maxlength="1" value="1"></div>
@@ -264,6 +277,33 @@
   });
 
 
+  // Draw dropdown (pen, highlighter, eraser)
+  const drawBtn = sidebar.querySelector('.sd-draw-btn');
+  const drawDropdown = sidebar.querySelector('.sd-draw-dropdown');
+  const drawIcon = sidebar.querySelector('.sd-draw-icon');
+
+  drawBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    state.drawDropdownOpen = !state.drawDropdownOpen;
+    drawDropdown.classList.toggle('open', state.drawDropdownOpen);
+    // Close other dropdowns
+    if (state.shapesDropdownOpen) { shapesDropdown.classList.remove('open'); state.shapesDropdownOpen = false; }
+    if (state.screenshotDropdownOpen) { screenshotDropdown.classList.remove('open'); state.screenshotDropdownOpen = false; }
+  });
+
+  drawDropdown.querySelectorAll('.sd-dropdown-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tool = item.dataset.tool;
+      setTool(tool);
+      drawIcon.src = drawIcon.dataset[tool] || drawIcon.dataset.default;
+      drawDropdown.querySelectorAll('.sd-dropdown-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      drawDropdown.classList.remove('open');
+      state.drawDropdownOpen = false;
+    });
+  });
+
   // Shapes dropdown
   const shapesBtn = sidebar.querySelector('.sd-shapes-btn');
   const shapesDropdown = sidebar.querySelector('.sd-shapes-dropdown');
@@ -273,6 +313,9 @@
     e.stopPropagation();
     state.shapesDropdownOpen = !state.shapesDropdownOpen;
     shapesDropdown.classList.toggle('open', state.shapesDropdownOpen);
+    // Close other dropdowns
+    if (state.drawDropdownOpen) { drawDropdown.classList.remove('open'); state.drawDropdownOpen = false; }
+    if (state.screenshotDropdownOpen) { screenshotDropdown.classList.remove('open'); state.screenshotDropdownOpen = false; }
   });
 
   shapesDropdown.querySelectorAll('.sd-dropdown-item').forEach(item => {
@@ -280,13 +323,16 @@
       e.stopPropagation();
       const tool = item.dataset.tool;
       setTool(tool);
-      shapeIcon.textContent = { arrow: 'arrow_right_alt', rectangle: 'rectangle', circle: 'circle', line: 'horizontal_rule' }[tool] || 'shapes';
+      shapeIcon.src = shapeIcon.dataset[tool] || shapeIcon.dataset.default;
+      shapesDropdown.querySelectorAll('.sd-dropdown-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
       shapesDropdown.classList.remove('open');
       state.shapesDropdownOpen = false;
     });
   });
 
   document.addEventListener('click', () => {
+    if (state.drawDropdownOpen) { drawDropdown.classList.remove('open'); state.drawDropdownOpen = false; }
     if (state.shapesDropdownOpen) { shapesDropdown.classList.remove('open'); state.shapesDropdownOpen = false; }
     if (state.screenshotDropdownOpen) { screenshotDropdown.classList.remove('open'); state.screenshotDropdownOpen = false; }
   });
@@ -299,6 +345,7 @@
     e.stopPropagation();
     state.screenshotDropdownOpen = !state.screenshotDropdownOpen;
     screenshotDropdown.classList.toggle('open', state.screenshotDropdownOpen);
+    if (state.drawDropdownOpen) { drawDropdown.classList.remove('open'); state.drawDropdownOpen = false; }
     if (state.shapesDropdownOpen) { shapesDropdown.classList.remove('open'); state.shapesDropdownOpen = false; }
   });
 
@@ -307,6 +354,7 @@
       e.stopPropagation();
       const action = item.dataset.action;
       if (action === 'screenshot') takeScreenshot();
+      else if (action === 'areashot') startAreaScreenshot();
       else if (action === 'fullscreenshot') takeFullPageScreenshot();
       screenshotDropdown.classList.remove('open');
       state.screenshotDropdownOpen = false;
@@ -388,13 +436,20 @@
     state.tool = tool;
     canvas.discardActiveObject().renderAll();
     
-    // Update UI
+    // Update UI - handle draw dropdown, shapes dropdown, and regular buttons
     sidebar.querySelectorAll('.sd-tool-btn').forEach(b => {
       const isShapesBtn = b.classList.contains('sd-shapes-btn');
-      if (isShapesBtn) b.classList.toggle('active', shapeTools.includes(tool));
-      else if (!shapeTools.includes(b.dataset.tool)) b.classList.toggle('active', b.dataset.tool === tool);
+      const isDrawBtn = b.classList.contains('sd-draw-btn');
+      if (isShapesBtn) {
+        b.classList.toggle('active', shapeTools.includes(tool));
+      } else if (isDrawBtn) {
+        b.classList.toggle('active', drawTools.includes(tool));
+      } else if (!shapeTools.includes(b.dataset.tool) && !drawTools.includes(b.dataset.tool)) {
+        b.classList.toggle('active', b.dataset.tool === tool);
+      }
     });
     shapesDropdown.querySelectorAll('.sd-dropdown-item').forEach(item => item.classList.toggle('active', item.dataset.tool === tool));
+    drawDropdown.querySelectorAll('.sd-dropdown-item').forEach(item => item.classList.toggle('active', item.dataset.tool === tool));
 
     // Configure canvas based on tool
     if (tool === 'pointer') {
@@ -666,6 +721,149 @@
   });
 
 
+  // Area selection screenshot
+  let areaSelection = null;
+  
+  function startAreaScreenshot() {
+    // Create selection overlay
+    areaSelection = document.createElement('div');
+    areaSelection.className = 'sd-area-selection-overlay';
+    areaSelection.innerHTML = '<div class="sd-area-selection-box"></div><div class="sd-area-selection-hint">Click and drag to select area</div>';
+    document.body.appendChild(areaSelection);
+    
+    const box = areaSelection.querySelector('.sd-area-selection-box');
+    const hint = areaSelection.querySelector('.sd-area-selection-hint');
+    let startX, startY, isSelecting = false;
+    
+    // Hide canvas and sidebar during selection
+    canvas.wrapperEl.style.opacity = '0.3';
+    sidebar.style.display = 'none';
+    
+    function onMouseDown(e) {
+      isSelecting = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      box.style.left = startX + 'px';
+      box.style.top = startY + 'px';
+      box.style.width = '0';
+      box.style.height = '0';
+      box.style.display = 'block';
+      hint.style.display = 'none';
+    }
+    
+    function onMouseMove(e) {
+      if (!isSelecting) return;
+      const currentX = e.clientX;
+      const currentY = e.clientY;
+      const left = Math.min(startX, currentX);
+      const top = Math.min(startY, currentY);
+      const width = Math.abs(currentX - startX);
+      const height = Math.abs(currentY - startY);
+      box.style.left = left + 'px';
+      box.style.top = top + 'px';
+      box.style.width = width + 'px';
+      box.style.height = height + 'px';
+    }
+    
+    function onMouseUp(e) {
+      if (!isSelecting) return;
+      isSelecting = false;
+      
+      const rect = box.getBoundingClientRect();
+      if (rect.width < 10 || rect.height < 10) {
+        cancelAreaSelection();
+        return;
+      }
+      
+      captureArea(rect);
+    }
+    
+    function onKeyDown(e) {
+      if (e.key === 'Escape') {
+        cancelAreaSelection();
+      }
+    }
+    
+    function cancelAreaSelection() {
+      cleanup();
+      canvas.wrapperEl.style.opacity = '1';
+      sidebar.style.display = '';
+    }
+    
+    function cleanup() {
+      areaSelection.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('keydown', onKeyDown);
+      areaSelection.remove();
+      areaSelection = null;
+    }
+    
+    function captureArea(rect) {
+      cleanup();
+      canvas.wrapperEl.style.display = 'none';
+      document.documentElement.classList.add('sd-hide-scrollbar');
+      
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      const dpr = window.devicePixelRatio || 1;
+      
+      setTimeout(() => {
+        chrome.runtime.sendMessage({ action: 'capture-screenshot' }, (response) => {
+          canvas.wrapperEl.style.display = '';
+          canvas.wrapperEl.style.opacity = '1';
+          sidebar.style.display = '';
+          document.documentElement.classList.remove('sd-hide-scrollbar');
+          
+          if (response && response.dataUrl) {
+            const img = new Image();
+            img.onload = () => {
+              // Create canvas for the selected area
+              const areaCanvas = document.createElement('canvas');
+              areaCanvas.width = rect.width * dpr;
+              areaCanvas.height = rect.height * dpr;
+              const ctx = areaCanvas.getContext('2d');
+              
+              // Draw the cropped region from the screenshot
+              ctx.drawImage(
+                img,
+                rect.left * dpr, rect.top * dpr,
+                rect.width * dpr, rect.height * dpr,
+                0, 0,
+                rect.width * dpr, rect.height * dpr
+              );
+              
+              // Draw fabric canvas content on top (cropped to selection)
+              const fabricDataUrl = canvas.toDataURL({
+                left: scrollX + rect.left,
+                top: scrollY + rect.top,
+                width: rect.width,
+                height: rect.height,
+                multiplier: dpr
+              });
+              
+              const fabricImg = new Image();
+              fabricImg.onload = () => {
+                ctx.drawImage(fabricImg, 0, 0);
+                const link = document.createElement('a');
+                link.download = `screenshot-area-${Date.now()}.png`;
+                link.href = areaCanvas.toDataURL('image/png');
+                link.click();
+              };
+              fabricImg.src = fabricDataUrl;
+            };
+            img.src = response.dataUrl;
+          }
+        });
+      }, 100);
+    }
+    
+    areaSelection.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('keydown', onKeyDown);
+  }
+
   // Screenshot functions
   function takeScreenshot() {
     canvas.wrapperEl.style.display = 'none';
@@ -799,15 +997,15 @@
     if (!e.ctrlKey && !e.metaKey && !e.altKey && state.active) {
       const key = e.key.toLowerCase();
       if (key === keybindings.pointer) setTool('pointer');
-      else if (key === keybindings.pen) setTool('pen');
-      else if (key === keybindings.highlighter) setTool('highlighter');
-      else if (key === keybindings.eraser) setTool('eraser');
+      else if (key === keybindings.pen) { setTool('pen'); drawIcon.src = drawIcon.dataset.pen; }
+      else if (key === keybindings.highlighter) { setTool('highlighter'); drawIcon.src = drawIcon.dataset.highlighter; }
+      else if (key === keybindings.eraser) { setTool('eraser'); drawIcon.src = drawIcon.dataset.eraser; }
       else if (key === keybindings.text) setTool('text');
       else if (key === keybindings.move) setTool('move');
-      else if (key === keybindings.line) { setTool('line'); shapeIcon.textContent = 'horizontal_rule'; }
-      else if (key === keybindings.arrow) { setTool('arrow'); shapeIcon.textContent = 'arrow_right_alt'; }
-      else if (key === keybindings.rectangle) { setTool('rectangle'); shapeIcon.textContent = 'rectangle'; }
-      else if (key === keybindings.circle) { setTool('circle'); shapeIcon.textContent = 'circle'; }
+      else if (key === keybindings.line) { setTool('line'); shapeIcon.src = shapeIcon.dataset.line; }
+      else if (key === keybindings.arrow) { setTool('arrow'); shapeIcon.src = shapeIcon.dataset.arrow; }
+      else if (key === keybindings.rectangle) { setTool('rectangle'); shapeIcon.src = shapeIcon.dataset.rectangle; }
+      else if (key === keybindings.circle) { setTool('circle'); shapeIcon.src = shapeIcon.dataset.circle; }
       else if (key === keybindings.undo) { e.preventDefault(); undo(); }
       else if (key === keybindings.redo) { e.preventDefault(); redo(); }
       else if (key === keybindings.screenshot) { e.preventDefault(); takeScreenshot(); }
@@ -815,7 +1013,6 @@
       else if (key === keybindings.clear) { e.preventDefault(); clearCanvas(); }
       else if (key === keybindings.toggle) { e.preventDefault(); toggleCollapse(); }
     }
-    
     // Delete selected objects
     if (e.key === 'Backspace' || e.key === 'Delete') {
       if (!isTextEditing && state.tool === 'move') {
@@ -871,32 +1068,4 @@
   window.__screenDrawToggle = toggle;
   setTimeout(() => sidebar.classList.add('sd-visible'), 50);
   saveStateImmediate(); // Save initial empty state
-
-  // FPS Counter
-  const fpsCounter = document.createElement('div');
-  fpsCounter.className = 'sd-fps-counter';
-  fpsCounter.textContent = '-- FPS';
-  document.body.appendChild(fpsCounter);
-
-  let frameCount = 0;
-  let lastTime = performance.now();
-  
-  function updateFPS() {
-    frameCount++;
-    const now = performance.now();
-    const delta = now - lastTime;
-    
-    if (delta >= 1000) {
-      const fps = Math.round((frameCount * 1000) / delta);
-      fpsCounter.textContent = fps + ' FPS';
-      frameCount = 0;
-      lastTime = now;
-    }
-    
-    if (state.active) {
-      requestAnimationFrame(updateFPS);
-    }
-  }
-  
-  requestAnimationFrame(updateFPS);
 })();
